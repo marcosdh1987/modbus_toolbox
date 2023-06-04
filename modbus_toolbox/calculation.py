@@ -96,7 +96,7 @@ def pid_control_calc(e_series, kp, ki, kd):
 
 def ai_control_calc(e_series, kp, ki, kd):
     "Function to calculate the PID control signal from a series of 3 values."
-    u = 0
+    u = 15
     return u
 
 
