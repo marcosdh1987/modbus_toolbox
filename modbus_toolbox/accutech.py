@@ -19,7 +19,9 @@ def test_connection(ip_address, d_port):
 
 
 def read_specific_register(ip_address, d_port, register):
-    client = ModbusClient(host=ip_address, port=d_port, auto_open=True, auto_close=True)
+    client = ModbusClient(
+        host=ip_address, port=d_port, auto_open=True, auto_close=True, timeout=1
+    )
     regs_l = client.read_holding_registers(register, 2)
     # convert the two registers into a a number, the source is in two register bases on float 32 bit ieee Floating Point
     dec = BinaryPayloadDecoder.fromRegisters(
@@ -100,7 +102,9 @@ def read_register_for_rfid(ip_address, port, rfid):
     modbus_register_address = 5 + (rfid * 10)
 
     # Crear un cliente Modbus TCP
-    client = ModbusClient(host=ip_address, port=port, auto_open=True, auto_close=True)
+    client = ModbusClient(
+        host=ip_address, port=port, auto_open=True, auto_close=True, timeout=1
+    )
 
     # Conectar al dispositivo
     if client.open():
