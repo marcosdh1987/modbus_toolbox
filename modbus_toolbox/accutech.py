@@ -7,16 +7,22 @@ from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 from pyModbusTCP.client import ModbusClient
 
 
-def test_connection(ip_address, d_port):
-    client = ModbusTcpClient(
-        host=ip_address, port=d_port, auto_open=True, auto_close=True
-    )
-    if client.connect():
-        client.close()
-        return True
-    else:
-        client.close()
-        return False
+def test_connection(ip_address, d_port, max_attempts=3):
+    for attempt in range(1, max_attempts + 1):
+        client = ModbusTcpClient(
+            host=ip_address, port=d_port, auto_open=True, auto_close=True
+        )
+        if client.connect():
+            client.close()
+            print(f"Conexión exitosa en el intento {attempt}")
+            return True
+        else:
+            client.close()
+            print(f"Intento {attempt} de conexión fallido")
+            if attempt < max_attempts:
+                print("Reintentando...")
+    print("No se pudo establecer la conexión después de varios intentos")
+    return False
 
 
 def read_specific_register(ip_address, d_port, register):
