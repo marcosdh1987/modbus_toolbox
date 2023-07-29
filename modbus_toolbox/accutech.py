@@ -1,4 +1,5 @@
 import struct
+import time
 
 from pymodbus.client import ModbusTcpClient
 from pymodbus.constants import Endian
@@ -32,7 +33,7 @@ def read_specific_register(ip_address, d_port, register):
     return value
 
 
-def read_values(ip_address, d_port, amount=30):
+def read_values_fast(ip_address, d_port, amount=30):
     data = []
     for i in range(1, amount + 1):
         modbus_register_address = 5 + (i * 10)
@@ -40,11 +41,39 @@ def read_values(ip_address, d_port, amount=30):
     return data
 
 
-# def read_values(ip_address, d_port, amount=30):
-#     data = []
-#     for rfid in range(1, amount + 1):
-#         data.append(read_register_for_rfid(ip_address, d_port, rfid))
-#     return data
+def read_values_by_rfid(ip_address, d_port, amount=30):
+    data = []
+    for rfid in range(1, amount + 1):
+        data.append(read_register_for_rfid(ip_address, d_port, rfid))
+    return data
+
+
+def read_values(ip_address, d_port, amount=30, max_attempts=3):
+    data = []
+    for i in range(1, amount + 1):
+        modbus_register_address = 5 + (i * 10)
+        value = None
+        attempts = 0
+        while attempts < max_attempts:
+            try:
+                value = read_specific_register(
+                    ip_address, d_port, modbus_register_address
+                )
+                break  # Si la lectura es exitosa, salimos del bucle while
+            except Exception as e:
+                print(f"Intento {attempts + 1} de lectura fallido: {e}")
+                attempts += 1
+                time.sleep(1)  # Esperar 1 segundo antes de intentar nuevamente
+        if value is not None:
+            data.append(value)
+        else:
+            print(
+                f"No se pudo leer el valor del registro {modbus_register_address} después de {max_attempts} intentos."
+            )
+            data.append(
+                None
+            )  # Puedes manejar el valor None como desees en tu aplicación
+    return data
 
 
 def write_specific_register(ip_address, d_port, register, value):
