@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="modbus_toolbox",
-    version="0.1.9",
+    version="0.1.10",
     author="Marcos E Soto",
     author_email="marcos.esteban.soto@gmail.com",
     description="Modbus Toolbox",
