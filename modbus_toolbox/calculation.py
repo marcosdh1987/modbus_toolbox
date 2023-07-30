@@ -8,7 +8,7 @@ def make_calcs(data, coeff):
         list: List of calculated values
     """
     Qstd = gas_calc(
-        data[1], data[2], data[3], coeff[2], coeff[3], coeff[4], coeff[5], coeff[6],
+        data[1], data[2], data[3], coeff[3], coeff[2], coeff[4], coeff[5], coeff[6],
     )
     vcf = vcf_calc(data[10], coeff[3])
     Ostd = mtf_calc(data[7], coeff[6]) * vcf
