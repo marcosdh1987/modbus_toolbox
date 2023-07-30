@@ -8,7 +8,7 @@ def make_calcs(data, coeff):
         list: List of calculated values
     """
     Qstd = gas_calc(
-        data[8], data[9], data[5], coeff[2], coeff[1], coeff[3], coeff[4], coeff[5]
+        data[1], data[2], data[3], coeff[2], coeff[3], coeff[4], coeff[5], coeff[6],
     )
     vcf = vcf_calc(data[10], coeff[3])
     Ostd = mtf_calc(data[7], coeff[6]) * vcf
@@ -20,7 +20,7 @@ def make_calcs(data, coeff):
     return data
 
 
-def gas_calc(P, Tf, Qf, atm, Pb, Tb, Zf, Zb):
+def gas_calc(P: float, Tf: float, Qf: float, atm: float, Pb: float, Tb: float, Zf: float, Zb: float):
     """Convert raw data to gas flow rate
 
     Args:
