@@ -26,7 +26,7 @@ def gas_calc(P, Tf, Qf, atm, Pb, Tb, Zf, Zb):
     Args:
         P (float): Pressure of gas flow rate (psig) (r40017)
         Tf (float): Temperature of gas flow rate (F) (r40019)
-        Qf (float): Raw gas flow rate (m3/d) (r40021)
+        Qf (float): Raw gas flow rate (m3/s) (r40021)
         atm (float): Atmospheric pressure (psia) (query from db)
         Pb (float): Base pressure (psia) (query from db)
         Tb (float): Base temperature (F) (query from db)
@@ -41,6 +41,8 @@ def gas_calc(P, Tf, Qf, atm, Pb, Tb, Zf, Zb):
     Returns:
         value: value of gas flow rate at standard conditions (m3/d)
     """
+    # calculate the gas m3/s to m3/d
+    Qf = Qf * 86400
     Pf = P + atm
     # convert gas flow rate to standard conditions
     return Qf * (Pf / Pb) * ((460 + Tf) / (460 + Tb)) * (Zf / Zb)
