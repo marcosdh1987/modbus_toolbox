@@ -101,6 +101,10 @@ def read_plc_register(ip_address, d_port, start_reg, length=72, max_attempts=3):
                 host=ip_address, port=d_port, auto_open=True, auto_close=True, timeout=1
             )
             regs_l = client.read_holding_registers(start_reg, length)
+
+            # Invertir el orden de los registros antes de convertir los datos
+            regs_l = regs_l[::-1]
+
             # iterate through the registers and convert the data to a float value
             for i in range(0, length, 2):
                 data.append(regs2float(regs_l[i : i + 2]))

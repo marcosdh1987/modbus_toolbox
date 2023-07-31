@@ -26,9 +26,7 @@ def test_connection(ip_address, d_port, max_attempts=3):
 
 
 def read_specific_register(ip_address, d_port, register):
-    client = ModbusClient(
-        host=ip_address, port=d_port, auto_open=True, auto_close=True, timeout=1
-    )
+    client = ModbusClient(host=ip_address, port=d_port, auto_open=True, auto_close=True)
     regs_l = client.read_holding_registers(register, 2)
     # convert the two registers into a a number, the source is in two register bases on float 32 bit ieee Floating Point
     dec = BinaryPayloadDecoder.fromRegisters(
