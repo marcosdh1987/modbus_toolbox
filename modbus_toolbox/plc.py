@@ -55,8 +55,8 @@ def write_plc_register(ip_address, d_port, start_reg, values):
         for value in values:
             builder.add_32bit_float(value)
 
-        # Obtener los registros resultantes como una lista de enteros
-        regs_to_write = builder.to_registers()
+        # Obtener los registros resultantes como una lista de enteros y revertir el orden
+        regs_to_write = builder.to_registers()[::-1]
 
         # Escribir los registros en el dispositivo Modbus
         result = client.write_multiple_registers(start_reg, regs_to_write)
