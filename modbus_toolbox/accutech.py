@@ -55,7 +55,7 @@ def read_values_by_rfid(ip_address, d_port, amount=30):
     return data
 
 
-def read_values(ip_address, d_port, amount=30, max_attempts=3):
+def read_values(ip_address, d_port, amount=30, max_attempts=2):
     data = []
     for i in range(1, amount + 1):
         modbus_register_address = 5 + (i * 10)
@@ -86,11 +86,15 @@ def read_v2(ip_address, d_port, amount=30):
     data = []
     #try to read the initial modbus register if it fails, add 0 to all data values and return
     try:
-        initial_value = read_specific_register(15)
+        initial_value = read_specific_register(
+                    ip_address, d_port, 15
+                )
         logger.info(f"Valor inicial: {initial_value}")
         for i in range(1, amount + 1):
             modbus_register_address = 5 + (i * 10)
-            value = read_specific_register(modbus_register_address)
+            value = read_specific_register(
+                    ip_address, d_port, modbus_register_address
+                )
             if value is not None:
                 data.append(value)
             else:
@@ -98,9 +102,9 @@ def read_v2(ip_address, d_port, amount=30):
                 data.append(None)
         return data
     except:
-        logger.info(f"No se pudo leer el valor del registro inicial, se retornan 0 en todos los valores.")
-        for i in range(0, amount):
-            data.append(0)
+        logger.info(f"No se pudo leer el valor del registro inicial, se retornan None en todos los valores")
+        for i in range(1, amount + 1):
+            data.append(None)
         return data
 
 
