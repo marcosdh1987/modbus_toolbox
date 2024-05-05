@@ -10,7 +10,7 @@ from modbus_toolbox.logger import Logger
 
 logger = Logger(name="Modbus-Toolbox-Accutech")._set_logger()
 
-def test_connection(ip_address, d_port, max_attempts=3):
+def test_connection(ip_address, d_port, max_attempts=2):
     for attempt in range(1, max_attempts + 1):
         client = ModbusTcpClient(
             host=ip_address, port=d_port, auto_open=True, auto_close=True
