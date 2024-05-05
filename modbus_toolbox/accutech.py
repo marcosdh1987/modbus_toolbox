@@ -82,6 +82,27 @@ def read_values(ip_address, d_port, amount=30, max_attempts=3):
             )  # Puedes manejar el valor None como desees en tu aplicación
     return data
 
+def read_v2(ip_address, d_port, amount=30):
+    data = []
+    #try to read the initial modbus register if it fails, add 0 to all data values and return
+    try:
+        initial_value = read_specific_register(15)
+        logger.info(f"Valor inicial: {initial_value}")
+        for i in range(1, amount + 1):
+            modbus_register_address = 5 + (i * 10)
+            value = read_specific_register(modbus_register_address)
+            if value is not None:
+                data.append(value)
+            else:
+                logger.info(f"No se pudo leer el valor del registro numero: {modbus_register_address}")
+                data.append(None)
+        return data
+    except:
+        logger.info(f"No se pudo leer el valor del registro inicial, se retornan 0 en todos los valores.")
+        for i in range(0, amount):
+            data.append(0)
+        return data
+
 
 def write_specific_register(ip_address, d_port, register, value):
     client = ModbusTcpClient(
