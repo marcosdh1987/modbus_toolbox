@@ -4,7 +4,9 @@ import time
 from pymodbus.constants import Endian
 from pymodbus.payload import BinaryPayloadBuilder
 from pyModbusTCP.client import ModbusClient
+from logger import Logger
 
+logger = Logger(name="Modbus-Toolbox-Plc")._set_logger()
 
 def read_plc_register_raw(ip_address, d_port, start_reg, length=36):
     client = ModbusClient(host=ip_address, port=d_port, auto_open=True, auto_close=True)
@@ -28,18 +30,18 @@ def write_single_float(ip_address, d_port, register, value):
         # Escribir los registros en el dispositivo Modbus
         result = client.write_multiple_registers(register, regs_to_write)
         if result:
-            print(
+            logger.info(
                 f"Valor {value} escrito en el PLC, registros {register} y {register + 1}"
             )
         else:
-            print(
+            logger.info(
                 f"Error al escribir el valor {value} en el PLC, registros {register} y {register + 1}"
             )
 
         # Cerrar la conexión
         client.close()
     else:
-        print("Error al conectar al dispositivo")
+        logger.info("Error al conectar al dispositivo")
 
 
 def write_plc_register(ip_address, d_port, start_reg, values):
@@ -61,14 +63,14 @@ def write_plc_register(ip_address, d_port, start_reg, values):
         # Escribir los registros en el dispositivo Modbus
         result = client.write_multiple_registers(start_reg, regs_to_write)
         if result:
-            print("Valores escritos en el PLC:", values)
+            logger.info("Valores escritos en el PLC:", values)
         else:
-            print("Error al escribir valores en el PLC")
+            logger.info("Error al escribir valores en el PLC")
 
         # Cerrar la conexión
         client.close()
     else:
-        print("Error al conectar al dispositivo")
+        logger.info("Error al conectar al dispositivo")
 
 
 def decimal_decode(regs_l):
@@ -110,11 +112,11 @@ def read_plc_register(ip_address, d_port, start_reg, length=72, max_attempts=3):
                 data.append(regs2float(regs_l[i : i + 2]))
             break  # Si la lectura es exitosa, salimos del bucle while
         except Exception as e:
-            print(f"Intento {attempts + 1} de lectura fallido: {e}")
+            logger.info(f"Intento {attempts + 1} de lectura fallido: {e}")
             attempts += 1
             time.sleep(1)  # Esperar 1 segundo antes de intentar nuevamente
     if attempts == max_attempts:
-        print(
+        logger.info(
             f"No se pudo leer los registros del PLC después de {max_attempts} intentos."
         )
         return None  # Puedes manejar el valor None como desees en tu aplicación

@@ -6,6 +6,9 @@ from pymodbus.constants import Endian
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 from pyModbusTCP.client import ModbusClient
 
+from logger import Logger
+
+logger = Logger(name="Modbus-Toolbox-Accutech")._set_logger()
 
 def test_connection(ip_address, d_port, max_attempts=3):
     for attempt in range(1, max_attempts + 1):
@@ -14,14 +17,14 @@ def test_connection(ip_address, d_port, max_attempts=3):
         )
         if client.connect():
             client.close()
-            print(f"Conexión exitosa en el intento {attempt}")
+            logger.info(f"Conexión exitosa en el intento {attempt}")
             return True
         else:
             client.close()
-            print(f"Intento {attempt} de conexión fallido")
+            logger.info(f"Intento {attempt} de conexión fallido")
             if attempt < max_attempts:
-                print("Reintentando...")
-    print("No se pudo establecer la conexión después de varios intentos")
+                logger.info("Reintentando...")
+    logger.info("No se pudo establecer la conexión después de varios intentos")
     return False
 
 
@@ -65,13 +68,13 @@ def read_values(ip_address, d_port, amount=30, max_attempts=3):
                 )
                 break  # Si la lectura es exitosa, salimos del bucle while
             except Exception as e:
-                print(f"Intento {attempts + 1} de lectura fallido: {e}")
+                logger.info(f"Intento {attempts + 1} de lectura fallido: {e}")
                 attempts += 1
                 time.sleep(1)  # Esperar 1 segundo antes de intentar nuevamente
         if value is not None:
             data.append(value)
         else:
-            print(
+            logger.info(
                 f"No se pudo leer el valor del registro {modbus_register_address} después de {max_attempts} intentos."
             )
             data.append(
@@ -120,14 +123,14 @@ def write_register_for_rfid(ip_address, port, rfid, value):
         # Escribir los registros en el dispositivo Modbus
         result = client.write_multiple_registers(modbus_register_address, regs_to_write)
         if result:
-            print(f"Valor {value} escrito para RFID {rfid}")
+            logger.info(f"Valor {value} escrito para RFID {rfid}")
         else:
-            print(f"Error al escribir registros para RFID {rfid}")
+            logger.info(f"Error al escribir registros para RFID {rfid}")
 
         # Cerrar la conexión
         client.close()
     else:
-        print("Error al conectar al dispositivo")
+        logger.info("Error al conectar al dispositivo")
 
 
 def read_register_for_rfid(ip_address, port, rfid):
@@ -151,14 +154,14 @@ def read_register_for_rfid(ip_address, port, rfid):
             )
             # get float value
             value = dec.decode_32bit_float()
-            # print(f"Valor leído para RFID {rfid}: {valor}")
+            # logger.info(f"Valor leído para RFID {rfid}: {valor}")
             return value
         else:
-            # print(f"Error al leer registros para RFID {rfid}")
+            # logger.info(f"Error al leer registros para RFID {rfid}")
             return None
 
         # Cerrar la conexión
         client.close()
     else:
-        print("Error al conectar al dispositivo")
+        logger.info("Error al conectar al dispositivo")
         return None
